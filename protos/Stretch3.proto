@@ -1,0 +1,1401 @@
+#VRML_SIM R2025a utf8
+# license: Apache License 2.0
+# license url: http://www.apache.org/licenses/LICENSE-2.0
+# documentation url: ../README.md
+# Hello Robot Stretch 3 mobile manipulator, simplified for CSCI 3302 (Webots R2025a).
+# Converted from the MJCF model released by Hello Robot (Apache-2.0, MuJoCo Menagerie
+# "hello_robot_stretch_3") with tools/mjcf2proto.py: link frames, joint axes, ranges and
+# masses come from the MJCF; collision shapes are simplified boxes/cylinders.
+#
+# Devices (names follow the stretch_ros joint names):
+#   joint_left_wheel / joint_right_wheel   RotationalMotor (velocity control, wheel radius 0.0508 m,
+#                                          wheel separation 0.3407 m)
+#   joint_lift                             LinearMotor 0 .. 1.1 m (vertical)
+#   joint_arm_l0 .. joint_arm_l3           LinearMotor 0 .. 0.13 m each (telescoping arm, total 0.52 m,
+#                                          extends along the robot's -y axis = to its right)
+#   joint_wrist_yaw / _pitch / _roll       RotationalMotor (dex wrist)
+#   joint_gripper_finger_left / _right     RotationalMotor (+ opens, - closes)
+#   joint_head_pan / joint_head_tilt       RotationalMotor
+#   <name>_sensor                          PositionSensor for every motor above
+#   lidar                                  3-D lidar: 360 deg x 16 layers (+-28.6 deg), 0.15 .. 12 m
+#   gps, imu                               ground-truth position / orientation
+# Add more devices (e.g. a Display) with the bodySlot field.
+
+PROTO Stretch3 [
+  field SFVec3f    translation     0 0 0
+  field SFRotation rotation        0 0 1 0
+  field SFString   name            "Stretch"
+  field SFString   controller      "<generic>"
+  field MFString   controllerArgs  []
+  field SFString   window          "<generic>"
+  field SFBool     supervisor      FALSE
+  field SFBool     synchronization TRUE
+  field SFInt32    lidarResolution 360     # rays per layer (360 deg)
+  field SFInt32    lidarLayers     16      # 3-D lidar: number of scan layers
+  field SFFloat    lidarVerticalFov 1.0    # [rad] vertical field of view (+-28.6 deg)
+  field SFFloat    lidarNoise      0.001
+  field MFNode     bodySlot        []
+]
+{
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    model "Hello Robot Stretch 3"
+    controller IS controller
+    controllerArgs IS controllerArgs
+    window IS window
+    supervisor IS supervisor
+    synchronization IS synchronization
+    children [
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.8000 0.0014 0.0000
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Caster_Rollers_Red.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0000 0.8000 0.0030
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Lightbar_Green.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0109 0.0236 0.0027
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Power_Button_Green.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0006 0.0102 0.8000
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__USB_Blue.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0369 0.0369 0.0369
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Generic_Black.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0800 0.0800 0.0800
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Hand_Crush_Sticker.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 1.0000 0.7231 0.7605
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Pantone_705_U.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.4735 0.4793 0.4852
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Pantone_Cool_Gray_4_U.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.8000 0.8000 0.8000
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Runstop_White_Glow.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0036 0.0036 0.0036
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Speaker_Housing_Black.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.8000 0.8000 0.8000
+          roughness 0.35
+          metalness 0.6
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Reflective_Metal.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0000 0.0000 0.0000
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Pure_Black.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 1.0000 1.0000 1.0000
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Plug_White.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.1144 0.1144 0.1144
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__3D_Print_Black.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0070 0.0545 0.7991
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Respeaker_Blue_Glow.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0723 0.0762 0.0931
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Pantone_Black_6_U.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0800 0.0800 0.0800
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Aruco_Right_Base_Sticker.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0800 0.0800 0.0800
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Aruco_Left_Base_Sticker.obj"
+        }
+        castShadows FALSE
+      }
+      Shape {
+        appearance PBRAppearance {
+          baseColor 0.0374 0.0374 0.0374
+          roughness 0.7
+          metalness 0.0
+        }
+        geometry Mesh {
+          url "stretch3/meshes/base_link__Laser_Black.obj"
+        }
+        castShadows FALSE
+      }
+      Lidar {
+        translation 0.004 0 0.1924
+        name "lidar"
+        horizontalResolution IS lidarResolution
+        fieldOfView 6.283185
+        numberOfLayers IS lidarLayers
+        verticalFieldOfView IS lidarVerticalFov
+        near 0.05
+        minRange 0.15
+        maxRange 12
+        noise IS lidarNoise
+        type "fixed"
+      }
+      GPS {
+        name "gps"
+      }
+      InertialUnit {
+        name "imu"
+      }
+      Group {
+        children IS bodySlot
+      }
+      Solid {
+        translation -0.245 0 0.0254
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.1 0.1 0.1
+              roughness 0.5
+              metalness 0
+            }
+            geometry DEF CASTER_BALL Sphere {
+              radius 0.0254
+              subdivision 2
+            }
+          }
+        ]
+        name "caster"
+        contactMaterial "stretch_caster"
+        boundingObject USE CASTER_BALL
+        physics Physics {
+          density -1
+          mass 0.1
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor 0 -0.17035 0.0508
+          dampingConstant 0.5
+        }
+        device [
+          RotationalMotor {
+            name "joint_right_wheel"
+            maxVelocity 6.0
+            maxTorque 20.0
+            sound ""
+          }
+          PositionSensor {
+            name "joint_right_wheel_sensor"
+          }
+        ]
+        endPoint Solid {
+          translation 0 -0.17035 0.0508
+          rotation -1 0 0 1.5708
+          name "link_right_wheel"
+          contactMaterial "stretch_wheel"
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.4190 0.4241 0.4292
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_right_wheel__Wheel_Rubber_Gray.obj"
+              }
+              castShadows FALSE
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.0369 0.0369 0.0369
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_right_wheel__Generic_Black.obj"
+              }
+              castShadows FALSE
+            }
+          ]
+          boundingObject Group {
+            children [
+            Pose {
+              translation 0 0 0.0125
+              children [ Cylinder { height 0.025 radius 0.0508 subdivision 24 } ]
+            }
+            ]
+          }
+          physics Physics {
+            density -1
+            mass 0.1500
+            centerOfMass [ -6.06224e-09 -2.77413e-09 0.0127 ]
+          }
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+          anchor 0 0.17035 0.0508
+          dampingConstant 0.5
+        }
+        device [
+          RotationalMotor {
+            name "joint_left_wheel"
+            maxVelocity 6.0
+            maxTorque 20.0
+            sound ""
+          }
+          PositionSensor {
+            name "joint_left_wheel_sensor"
+          }
+        ]
+        endPoint Solid {
+          translation 0 0.17035 0.0508
+          rotation -1 0 0 1.5708
+          name "link_left_wheel"
+          contactMaterial "stretch_wheel"
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.4190 0.4241 0.4292
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_left_wheel__Wheel_Rubber_Gray.obj"
+              }
+              castShadows FALSE
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.0369 0.0369 0.0369
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_left_wheel__Generic_Black.obj"
+              }
+              castShadows FALSE
+            }
+          ]
+          boundingObject Group {
+            children [
+            Pose {
+              translation 0 0 -0.0125
+              children [ Cylinder { height 0.025 radius 0.0508 subdivision 24 } ]
+            }
+            ]
+          }
+          physics Physics {
+            density -1
+            mass 0.1500
+            centerOfMass [ 2.77413e-09 6.06224e-09 -0.0127 ]
+          }
+        }
+      }
+      SliderJoint {
+        jointParameters JointParameters {
+          axis 0 0 1
+          dampingConstant 5
+        }
+        device [
+          LinearMotor {
+            name "joint_lift"
+            maxVelocity 0.25
+            maxForce 300.0
+            minPosition 0.0
+            maxPosition 1.1
+            sound ""
+          }
+          PositionSensor {
+            name "joint_lift_sensor"
+          }
+        ]
+        endPoint Solid {
+          translation -0.104385 0.134999 0.2
+          rotation 0 0 1 1.5708
+          name "link_lift"
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 1.0000 0.7231 0.7605
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_lift__Pantone_705_U.obj"
+              }
+              castShadows FALSE
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.0000 0.0000 0.0000
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_lift__Pure_Black.obj"
+              }
+              castShadows FALSE
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.8000 0.8000 0.8000
+                roughness 0.35
+                metalness 0.6
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_lift__Reflective_Metal.obj"
+              }
+              castShadows FALSE
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor 1.0000 1.0000 1.0000
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_lift__Plug_White.obj"
+              }
+              castShadows FALSE
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.0723 0.0762 0.0931
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_lift__Pantone_Black_6_U.obj"
+              }
+              castShadows FALSE
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.0369 0.0369 0.0369
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_lift__Generic_Black.obj"
+              }
+              castShadows FALSE
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.1144 0.1144 0.1144
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_lift__3D_Print_Black.obj"
+              }
+              castShadows FALSE
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.0612 0.0612 0.0612
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_lift__Carbon_Fiber.obj"
+              }
+              castShadows FALSE
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.0800 0.0800 0.0800
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_lift__Aruco_Shoulder_Sticker.obj"
+              }
+              castShadows FALSE
+            }
+            SliderJoint {
+              jointParameters JointParameters {
+                axis -1 0 0
+                dampingConstant 5
+              }
+              device [
+                LinearMotor {
+                  name "joint_arm_l3"
+                  maxVelocity 0.08
+                  maxForce 100.0
+                  minPosition 0.0
+                  maxPosition 0.13
+                  sound ""
+                }
+                PositionSensor {
+                  name "joint_arm_l3_sensor"
+                }
+              ]
+              endPoint Solid {
+                translation -0.2677 0 0
+                rotation 0.57735 -0.57735 -0.57735 2.0944
+                name "link_arm_l3"
+                children [
+                  Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.0612 0.0612 0.0612
+                      roughness 0.7
+                      metalness 0.0
+                    }
+                    geometry Mesh {
+                      url "stretch3/meshes/link_arm_l3__Carbon_Fiber.obj"
+                    }
+                    castShadows FALSE
+                  }
+                  Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.1144 0.1144 0.1144
+                      roughness 0.7
+                      metalness 0.0
+                    }
+                    geometry Mesh {
+                      url "stretch3/meshes/link_arm_l3__3D_Print_Black.obj"
+                    }
+                    castShadows FALSE
+                  }
+                  SliderJoint {
+                    jointParameters JointParameters {
+                      axis 0 0 1
+                      dampingConstant 5
+                    }
+                    device [
+                      LinearMotor {
+                        name "joint_arm_l2"
+                        maxVelocity 0.08
+                        maxForce 100.0
+                        minPosition 0.0
+                        maxPosition 0.13
+                        sound ""
+                      }
+                      PositionSensor {
+                        name "joint_arm_l2_sensor"
+                      }
+                    ]
+                    endPoint Solid {
+                      translation 0 0 0.013
+                      rotation 0 0 1 0
+                      name "link_arm_l2"
+                      children [
+                        Shape {
+                          appearance PBRAppearance {
+                            baseColor 0.0612 0.0612 0.0612
+                            roughness 0.7
+                            metalness 0.0
+                          }
+                          geometry Mesh {
+                            url "stretch3/meshes/link_arm_l2__Carbon_Fiber.obj"
+                          }
+                          castShadows FALSE
+                        }
+                        Shape {
+                          appearance PBRAppearance {
+                            baseColor 0.1144 0.1144 0.1144
+                            roughness 0.7
+                            metalness 0.0
+                          }
+                          geometry Mesh {
+                            url "stretch3/meshes/link_arm_l2__3D_Print_Black.obj"
+                          }
+                          castShadows FALSE
+                        }
+                        SliderJoint {
+                          jointParameters JointParameters {
+                            axis 0 0 1
+                            dampingConstant 5
+                          }
+                          device [
+                            LinearMotor {
+                              name "joint_arm_l1"
+                              maxVelocity 0.08
+                              maxForce 100.0
+                              minPosition 0.0
+                              maxPosition 0.13
+                              sound ""
+                            }
+                            PositionSensor {
+                              name "joint_arm_l1_sensor"
+                            }
+                          ]
+                          endPoint Solid {
+                            translation 0 0 0.013
+                            rotation 0 0 1 0
+                            name "link_arm_l1"
+                            children [
+                              Shape {
+                                appearance PBRAppearance {
+                                  baseColor 0.0612 0.0612 0.0612
+                                  roughness 0.7
+                                  metalness 0.0
+                                }
+                                geometry Mesh {
+                                  url "stretch3/meshes/link_arm_l1__Carbon_Fiber.obj"
+                                }
+                                castShadows FALSE
+                              }
+                              Shape {
+                                appearance PBRAppearance {
+                                  baseColor 0.1144 0.1144 0.1144
+                                  roughness 0.7
+                                  metalness 0.0
+                                }
+                                geometry Mesh {
+                                  url "stretch3/meshes/link_arm_l1__3D_Print_Black.obj"
+                                }
+                                castShadows FALSE
+                              }
+                              SliderJoint {
+                                jointParameters JointParameters {
+                                  axis 0 0 1
+                                  dampingConstant 5
+                                }
+                                device [
+                                  LinearMotor {
+                                    name "joint_arm_l0"
+                                    maxVelocity 0.08
+                                    maxForce 100.0
+                                    minPosition 0.0
+                                    maxPosition 0.13
+                                    sound ""
+                                  }
+                                  PositionSensor {
+                                    name "joint_arm_l0_sensor"
+                                  }
+                                ]
+                                endPoint Solid {
+                                  translation 0 0 -0.01375
+                                  rotation 0 0 1 0
+                                  name "link_arm_l0"
+                                  children [
+                                    Shape {
+                                      appearance PBRAppearance {
+                                        baseColor 0.1144 0.1144 0.1144
+                                        roughness 0.7
+                                        metalness 0.0
+                                      }
+                                      geometry Mesh {
+                                        url "stretch3/meshes/link_arm_l0__3D_Print_Black.obj"
+                                      }
+                                      castShadows FALSE
+                                    }
+                                    Shape {
+                                      appearance PBRAppearance {
+                                        baseColor 0.0612 0.0612 0.0612
+                                        roughness 0.7
+                                        metalness 0.0
+                                      }
+                                      geometry Mesh {
+                                        url "stretch3/meshes/link_arm_l0__Carbon_Fiber.obj"
+                                      }
+                                      castShadows FALSE
+                                    }
+                                    Shape {
+                                      appearance PBRAppearance {
+                                        baseColor 0.0369 0.0369 0.0369
+                                        roughness 0.7
+                                        metalness 0.0
+                                      }
+                                      geometry Mesh {
+                                        url "stretch3/meshes/link_arm_l0__Generic_Black.obj"
+                                      }
+                                      castShadows FALSE
+                                    }
+                                    Shape {
+                                      appearance PBRAppearance {
+                                        baseColor 0.0800 0.0800 0.0800
+                                        roughness 0.7
+                                        metalness 0.0
+                                      }
+                                      geometry Mesh {
+                                        url "stretch3/meshes/link_arm_l0__Aruco_Top_Wrist_Sticker.obj"
+                                      }
+                                      castShadows FALSE
+                                    }
+                                    Shape {
+                                      appearance PBRAppearance {
+                                        baseColor 0.0800 0.0800 0.0800
+                                        roughness 0.7
+                                        metalness 0.0
+                                      }
+                                      geometry Mesh {
+                                        url "stretch3/meshes/link_arm_l0__Aruco_Inner_Wrist_Sticker.obj"
+                                      }
+                                      castShadows FALSE
+                                    }
+                                    HingeJoint {
+                                      jointParameters HingeJointParameters {
+                                        axis 0 1 0
+                                        anchor 0.083 -0.03075 0
+                                        dampingConstant 0.05
+                                      }
+                                      device [
+                                        RotationalMotor {
+                                          name "joint_wrist_yaw"
+                                          maxVelocity 1.5
+                                          maxTorque 20.0
+                                          minPosition -1.39
+                                          maxPosition 4.42
+                                          sound ""
+                                        }
+                                        PositionSensor {
+                                          name "joint_wrist_yaw_sensor"
+                                        }
+                                      ]
+                                      endPoint Solid {
+                                        translation 0.083 -0.03075 0
+                                        rotation 1 0 0 1.5708
+                                        name "link_wrist_yaw"
+                                        children [
+                                          Shape {
+                                            appearance PBRAppearance {
+                                              baseColor 0.0369 0.0369 0.0369
+                                              roughness 0.7
+                                              metalness 0.0
+                                            }
+                                            geometry Mesh {
+                                              url "stretch3/meshes/link_wrist_yaw__Generic_Black.obj"
+                                            }
+                                            castShadows FALSE
+                                          }
+                                          HingeJoint {
+                                            jointParameters HingeJointParameters {
+                                              axis -1 0 -0.000796327
+                                              anchor -0.01946 0 0.0305
+                                              dampingConstant 0.05
+                                            }
+                                            device [
+                                              RotationalMotor {
+                                                name "joint_wrist_pitch"
+                                                maxVelocity 1.5
+                                                maxTorque 20.0
+                                                minPosition -1.57
+                                                maxPosition 0.56
+                                                sound ""
+                                              }
+                                              PositionSensor {
+                                                name "joint_wrist_pitch_sensor"
+                                              }
+                                            ]
+                                            endPoint Solid {
+                                              translation -0.01946 0 0.0305
+                                              rotation -0.577044 0.577503 -0.577503 2.09348
+                                              name "link_DW3_wrist_pitch"
+                                              children [
+                                                Shape {
+                                                  appearance PBRAppearance {
+                                                    baseColor 0.0369 0.0369 0.0369
+                                                    roughness 0.7
+                                                    metalness 0.0
+                                                  }
+                                                  geometry Mesh {
+                                                    url "stretch3/meshes/link_DW3_wrist_pitch__Generic_Black.obj"
+                                                  }
+                                                  castShadows FALSE
+                                                }
+                                                HingeJoint {
+                                                  jointParameters HingeJointParameters {
+                                                    axis -1 0 0
+                                                    anchor -0.0399 -0.024 0.0196
+                                                    dampingConstant 0.05
+                                                  }
+                                                  device [
+                                                    RotationalMotor {
+                                                      name "joint_wrist_roll"
+                                                      maxVelocity 1.5
+                                                      maxTorque 20.0
+                                                      minPosition -3.14
+                                                      maxPosition 3.14
+                                                      sound ""
+                                                    }
+                                                    PositionSensor {
+                                                      name "joint_wrist_roll_sensor"
+                                                    }
+                                                  ]
+                                                  endPoint Solid {
+                                                    translation -0.0399 -0.024 0.0196
+                                                    rotation 0 -1 0 1.5708
+                                                    name "link_SG3_gripper_body"
+                                                    children [
+                                                      Shape {
+                                                        appearance PBRAppearance {
+                                                          baseColor 0.0369 0.0369 0.0369
+                                                          roughness 0.7
+                                                          metalness 0.0
+                                                        }
+                                                        geometry Mesh {
+                                                          url "stretch3/meshes/link_SG3_gripper_body__Generic_Black.obj"
+                                                        }
+                                                        castShadows FALSE
+                                                      }
+                                                      Shape {
+                                                        appearance PBRAppearance {
+                                                          baseColor 0.0800 0.0800 0.0800
+                                                          roughness 0.7
+                                                          metalness 0.0
+                                                        }
+                                                        geometry Mesh {
+                                                          url "stretch3/meshes/link_SG3_gripper_body__Aruco_gripper_cam_Sticker.obj"
+                                                        }
+                                                        castShadows FALSE
+                                                      }
+                                                      Shape {
+                                                        appearance PBRAppearance {
+                                                          baseColor 0.8000 0.8000 0.8000
+                                                          roughness 0.35
+                                                          metalness 0.6
+                                                        }
+                                                        geometry Mesh {
+                                                          url "stretch3/meshes/link_SG3_gripper_body__Reflective_Metal.obj"
+                                                        }
+                                                        castShadows FALSE
+                                                      }
+                                                      Shape {
+                                                        appearance PBRAppearance {
+                                                          baseColor 0.3000 0.3000 0.3000
+                                                          roughness 0.35
+                                                          metalness 0.0
+                                                        }
+                                                        geometry Mesh {
+                                                          url "stretch3/meshes/link_SG3_gripper_body__Gray_Lens.obj"
+                                                        }
+                                                        castShadows FALSE
+                                                      }
+                                                      Shape {
+                                                        appearance PBRAppearance {
+                                                          baseColor 0.0723 0.0762 0.0931
+                                                          roughness 0.7
+                                                          metalness 0.0
+                                                        }
+                                                        geometry Mesh {
+                                                          url "stretch3/meshes/link_SG3_gripper_body__Pantone_Black_6_U.obj"
+                                                        }
+                                                        castShadows FALSE
+                                                      }
+                                                      HingeJoint {
+                                                        jointParameters HingeJointParameters {
+                                                          axis -5.85014e-09 1 -7.34641e-06
+                                                          anchor 0.02292 0.0020217 0.035297
+                                                          dampingConstant 0.05
+                                                        }
+                                                        device [
+                                                          RotationalMotor {
+                                                            name "joint_gripper_finger_left"
+                                                            maxVelocity 0.8
+                                                            maxTorque 2.0
+                                                            minPosition -0.3
+                                                            maxPosition 0.5
+                                                            sound ""
+                                                          }
+                                                          PositionSensor {
+                                                            name "joint_gripper_finger_left_sensor"
+                                                          }
+                                                        ]
+                                                        endPoint Solid {
+                                                          translation 0.02292 0.0020217 0.035297
+                                                          rotation 0.706831 -2.59633e-06 -0.707394 3.14159
+                                                          name "link_gripper_finger_left"
+                                                          contactMaterial "stretch_rubber"
+                                                          children [
+                                                            Shape {
+                                                              appearance PBRAppearance {
+                                                                baseColor 0.0369 0.0369 0.0369
+                                                                roughness 0.7
+                                                                metalness 0.0
+                                                              }
+                                                              geometry Mesh {
+                                                                url "stretch3/meshes/link_gripper_finger_left__Generic_Black.obj"
+                                                              }
+                                                              castShadows FALSE
+                                                            }
+                                                            Shape {
+                                                              appearance PBRAppearance {
+                                                                baseColor 1.0000 1.0000 1.0000
+                                                                roughness 0.7
+                                                                metalness 0.0
+                                                              }
+                                                              geometry Mesh {
+                                                                url "stretch3/meshes/link_gripper_finger_left__White_Plastic.obj"
+                                                              }
+                                                              castShadows FALSE
+                                                            }
+                                                            Shape {
+                                                              appearance PBRAppearance {
+                                                                baseColor 0.8000 0.8000 0.8000
+                                                                roughness 0.35
+                                                                metalness 0.6
+                                                              }
+                                                              geometry Mesh {
+                                                                url "stretch3/meshes/link_gripper_finger_left__Reflective_Metal.obj"
+                                                              }
+                                                              castShadows FALSE
+                                                            }
+                                                            Shape {
+                                                              appearance PBRAppearance {
+                                                                baseColor 0.2510 0.2510 0.2510
+                                                                roughness 0.7
+                                                                metalness 0.0
+                                                              }
+                                                              geometry Mesh {
+                                                                url "stretch3/meshes/link_gripper_finger_left__suction_rubber.obj"
+                                                              }
+                                                              castShadows FALSE
+                                                            }
+                                                            Shape {
+                                                              appearance PBRAppearance {
+                                                                baseColor 0.0800 0.0800 0.0800
+                                                                roughness 0.7
+                                                                metalness 0.0
+                                                              }
+                                                              geometry Mesh {
+                                                                url "stretch3/meshes/link_gripper_finger_left__Aruco_left_finger_Sticker.obj"
+                                                              }
+                                                              castShadows FALSE
+                                                            }
+                                                          ]
+                                                          boundingObject Group {
+                                                            children [
+                                                            Pose {
+                                                              translation -0.180358 0.0018452 -0.00161274
+                                                              rotation 0.00518545 -0.999211 -0.0393873 0.262004
+                                                              children [ Box { size 0.04 0.04 0.02 } ]
+                                                            }
+                                                            ]
+                                                          }
+                                                          physics Physics {
+                                                            density -1
+                                                            mass 0.1050
+                                                            centerOfMass [ -0.142543 0.0019268 -0.00248757 ]
+                                                          }
+                                                        }
+                                                      }
+                                                      HingeJoint {
+                                                        jointParameters HingeJointParameters {
+                                                          axis -5.85014e-09 -1 1.46928e-05
+                                                          anchor -0.023281 0 0.035287
+                                                          dampingConstant 0.05
+                                                        }
+                                                        device [
+                                                          RotationalMotor {
+                                                            name "joint_gripper_finger_right"
+                                                            maxVelocity 0.8
+                                                            maxTorque 2.0
+                                                            minPosition -0.3
+                                                            maxPosition 0.5
+                                                            sound ""
+                                                          }
+                                                          PositionSensor {
+                                                            name "joint_gripper_finger_right_sensor"
+                                                          }
+                                                        ]
+                                                        endPoint Solid {
+                                                          translation -0.023281 0 0.035287
+                                                          rotation -7.34349e-06 -1 7.34349e-06 1.57159
+                                                          name "link_gripper_finger_right"
+                                                          contactMaterial "stretch_rubber"
+                                                          children [
+                                                            Shape {
+                                                              appearance PBRAppearance {
+                                                                baseColor 0.0369 0.0369 0.0369
+                                                                roughness 0.7
+                                                                metalness 0.0
+                                                              }
+                                                              geometry Mesh {
+                                                                url "stretch3/meshes/link_gripper_finger_right__Generic_Black.obj"
+                                                              }
+                                                              castShadows FALSE
+                                                            }
+                                                            Shape {
+                                                              appearance PBRAppearance {
+                                                                baseColor 1.0000 1.0000 1.0000
+                                                                roughness 0.7
+                                                                metalness 0.0
+                                                              }
+                                                              geometry Mesh {
+                                                                url "stretch3/meshes/link_gripper_finger_right__White_Plastic.obj"
+                                                              }
+                                                              castShadows FALSE
+                                                            }
+                                                            Shape {
+                                                              appearance PBRAppearance {
+                                                                baseColor 0.8000 0.8000 0.8000
+                                                                roughness 0.35
+                                                                metalness 0.6
+                                                              }
+                                                              geometry Mesh {
+                                                                url "stretch3/meshes/link_gripper_finger_right__Reflective_Metal.obj"
+                                                              }
+                                                              castShadows FALSE
+                                                            }
+                                                            Shape {
+                                                              appearance PBRAppearance {
+                                                                baseColor 0.2510 0.2510 0.2510
+                                                                roughness 0.7
+                                                                metalness 0.0
+                                                              }
+                                                              geometry Mesh {
+                                                                url "stretch3/meshes/link_gripper_finger_right__suction_rubber.obj"
+                                                              }
+                                                              castShadows FALSE
+                                                            }
+                                                            Shape {
+                                                              appearance PBRAppearance {
+                                                                baseColor 0.0800 0.0800 0.0800
+                                                                roughness 0.7
+                                                                metalness 0.0
+                                                              }
+                                                              geometry Mesh {
+                                                                url "stretch3/meshes/link_gripper_finger_right__Aruco_right_finger_Sticker.obj"
+                                                              }
+                                                              castShadows FALSE
+                                                            }
+                                                          ]
+                                                          boundingObject Group {
+                                                            children [
+                                                            Pose {
+                                                              translation 0.180368 -7.09609e-08 0.00161274
+                                                              rotation -4.15679e-06 1 -4.15679e-06 2.87979
+                                                              children [ Box { size 0.04 0.04 0.02 } ]
+                                                            }
+                                                            ]
+                                                          }
+                                                          physics Physics {
+                                                            density -1
+                                                            mass 0.1550
+                                                            centerOfMass [ 0.123034 -0.000125189 0.00525762 ]
+                                                          }
+                                                        }
+                                                      }
+                                                    ]
+                                                    boundingObject Group {
+                                                      children [
+                                                      Pose {
+                                                        translation -1.396e-10 0.02217 0.0507
+                                                        rotation 0 0 1 0
+                                                        children [ Box { size 0.066384 0.13559 0.1014 } ]
+                                                      }
+                                                      ]
+                                                    }
+                                                    physics Physics {
+                                                      density -1
+                                                      mass 0.6300
+                                                      centerOfMass [ 0.00037963 0.0375086 0.0432906 ]
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                              boundingObject Group {
+                                                children [
+                                                Pose {
+                                                  translation -0.00507827 -0.0163561 0.011161
+                                                  rotation 0 0 1 0
+                                                  children [ Box { size 0.055561 0.0787121 0.062322 } ]
+                                                }
+                                                ]
+                                              }
+                                              physics Physics {
+                                                density -1
+                                                mass 0.1165
+                                                centerOfMass [ -0.00328234 -0.0189061 0.0189544 ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                        boundingObject Group {
+                                          children [
+                                          Pose {
+                                            translation -0.01725 -0.029496 -0.024875
+                                            rotation 0 0 1 0
+                                            children [ Box { size 0.0725 0.088918 0.04975 } ]
+                                          }
+                                          ]
+                                        }
+                                        physics Physics {
+                                          density -1
+                                          mass 0.1445
+                                          centerOfMass [ -3.84993e-08 -7.6185e-05 -0.0190453 ]
+                                        }
+                                      }
+                                    }
+                                  ]
+                                  boundingObject Group {
+                                    children [
+                                    Pose {
+                                      translation 0.0431875 -0.000357499 -0.08725
+                                      rotation 0 0 1 0
+                                      children [ Box { size 0.123625 0.059285 0.225 } ]
+                                    }
+                                    ]
+                                  }
+                                  physics Physics {
+                                    density -1
+                                    mass 0.2850
+                                    centerOfMass [ 1.19092e-06 2.207e-07 -0.0951315 ]
+                                  }
+                                }
+                              }
+                            ]
+                            boundingObject Group {
+                              children [
+                              Pose {
+                                translation -1.43849e-10 6.23786e-12 -0.11325
+                                rotation 0 0 1 0
+                                children [ Box { size 0.04735 0.04735 0.2265 } ]
+                              }
+                              ]
+                            }
+                            physics Physics {
+                              density -1
+                              mass 0.1514
+                              centerOfMass [ 0 0 -0.119635 ]
+                            }
+                          }
+                        }
+                      ]
+                      boundingObject Group {
+                        children [
+                        Pose {
+                          translation -1.96617e-10 0 -0.11325
+                          rotation 0 0 1 0
+                          children [ Box { size 0.05135 0.05135 0.2265 } ]
+                        }
+                        ]
+                      }
+                      physics Physics {
+                        density -1
+                        mass 0.1571
+                        centerOfMass [ 0 0 -0.119434 ]
+                      }
+                    }
+                  }
+                ]
+                boundingObject Group {
+                  children [
+                  Pose {
+                    translation 2.26993e-10 -4.01458e-10 -0.11325
+                    rotation 0 0 1 0
+                    children [ Box { size 0.05525 0.05525 0.2265 } ]
+                  }
+                  ]
+                }
+                physics Physics {
+                  density -1
+                  mass 0.1629
+                  centerOfMass [ 0 0 -0.119274 ]
+                }
+              }
+            }
+          ]
+          boundingObject Group {
+            children [
+            Pose {
+              translation -0.109328 0.0391015 0.0263205
+              rotation 0 0 1 0
+              children [ Box { size 0.290745 0.229591 0.120641 } ]
+            }
+            ]
+          }
+          physics Physics {
+            density -1
+            mass 3.1681
+            centerOfMass [ -0.0355117 0.0338986 0.0061318 ]
+          }
+        }
+      }
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 0 1
+          anchor 0.00610002 0 1.3552
+          dampingConstant 0.05
+        }
+        device [
+          RotationalMotor {
+            name "joint_head_pan"
+            maxVelocity 1.5
+            maxTorque 5.0
+            minPosition -4.04
+            maxPosition 1.73
+            sound ""
+          }
+          PositionSensor {
+            name "joint_head_pan_sensor"
+          }
+        ]
+        endPoint Solid {
+          translation 0.00610002 0 1.3552
+          rotation 0 0 1 0
+          name "link_head_pan"
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.1144 0.1144 0.1144
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_head_pan__3D_Print_Black.obj"
+              }
+              castShadows FALSE
+            }
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.0369 0.0369 0.0369
+                roughness 0.7
+                metalness 0.0
+              }
+              geometry Mesh {
+                url "stretch3/meshes/link_head_pan__Generic_Black.obj"
+              }
+              castShadows FALSE
+            }
+            HingeJoint {
+              jointParameters HingeJointParameters {
+                axis 0 -1 0
+                anchor -0.0013 0.0277625 -0.0533108
+                dampingConstant 0.05
+              }
+              device [
+                RotationalMotor {
+                  name "joint_head_tilt"
+                  maxVelocity 1.5
+                  maxTorque 5.0
+                  minPosition -1.53
+                  maxPosition 0.79
+                  sound ""
+                }
+                PositionSensor {
+                  name "joint_head_tilt_sensor"
+                }
+              ]
+              endPoint Solid {
+                translation -0.0013 0.0277625 -0.0533108
+                rotation 1 0 0 1.5708
+                name "link_head_tilt"
+                children [
+                  Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.4735 0.4793 0.4852
+                      roughness 0.7
+                      metalness 0.0
+                    }
+                    geometry Mesh {
+                      url "stretch3/meshes/link_head_tilt__Pantone_Cool_Gray_4_U.obj"
+                    }
+                    castShadows FALSE
+                  }
+                  Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.1144 0.1144 0.1144
+                      roughness 0.7
+                      metalness 0.0
+                    }
+                    geometry Mesh {
+                      url "stretch3/meshes/link_head_tilt__3D_Print_Black.obj"
+                    }
+                    castShadows FALSE
+                  }
+                  Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.0369 0.0369 0.0369
+                      roughness 0.7
+                      metalness 0.0
+                    }
+                    geometry Mesh {
+                      url "stretch3/meshes/link_head_tilt__Generic_Black.obj"
+                    }
+                    castShadows FALSE
+                  }
+                ]
+                boundingObject Group {
+                  children [
+                  Pose {
+                    translation 0.010821 -0.0234725 0.0311345
+                    rotation 0 0 1 0
+                    children [ Box { size 0.067998 0.120843 0.062269 } ]
+                  }
+                  ]
+                }
+                physics Physics {
+                  density -1
+                  mass 0.2906
+                  centerOfMass [ 0.0160697 -0.0267997 0.0264363 ]
+                }
+              }
+            }
+          ]
+          boundingObject Group {
+            children [
+            Pose {
+              translation -4.93536e-12 0.0080105 -0.0126555
+              rotation 0 0 1 0
+              children [ Box { size 0.045 0.061021 0.106311 } ]
+            }
+            ]
+          }
+          physics Physics {
+            density -1
+            mass 0.1274
+            centerOfMass [ -0.00037136 0.008691 -0.00269439 ]
+          }
+        }
+      }
+    ]
+    boundingObject Group {
+      children [
+        Pose {
+          translation -0.114 0.000499999 0.0954986
+          children [ Box { size 0.324994 0.341994 0.130997 } ]
+        }
+        Pose {
+          translation -0.067 0.135 0.7359
+          children [ Box { size 0.038126 0.038126 1.285 } ]
+        }
+        Pose {
+          translation 0.004 0 0.1864
+          children [ Cylinder { height 0.05 radius 0.04 } ]
+        }
+      ]
+    }
+    physics Physics {
+      density -1
+      mass 17.902
+      centerOfMass [ -0.0985912 0.0196291 0.219586 ]
+    }
+  }
+}
